@@ -1,0 +1,45 @@
+/* game.css */
+
+* {
+  box-sizing: border-box;
+  border: 1px solid red;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #a2d5f2, #4acfd5);
+  color: #003366;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.cell {
+  background-color: #b4e0e9;
+  border: 1.5px solid #00acc1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(8rem, 14vw, 13rem);
+  font-weight: 700;
+  color: #003366;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  aspect-ratio: 1 / 1; /* Quadratisch */
+  user-select: none;
+}
+.board-container {
+  width: 83vw;          /* 90% der Viewportbreite */
+  max-width: 600px;     /* maximale Breite auf großen Bildschirmen */
+  min-width: 300px;     /* minimale Breite */
+  aspect-ratio: 1 / 1;  /* Quadrat erzwingen */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  background-color: #e0f7fa;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #0077b6aa;
+  user-select: none;
+}
