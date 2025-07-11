@@ -2,7 +2,6 @@
 
 * {
   box-sizing: border-box;
-  border: 1px solid red;
 }
 
 body {
@@ -13,6 +12,41 @@ body {
   user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding-top: 40px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #003366;
+  text-shadow: 1px 1px 4px #ffffff80;
+  margin: 0;
+}
+
+.board-container {
+    position: relative; 
+  width: 83vw;
+  max-width: 600px;
+  min-width: 300px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  background-color: #e0f7fa;
+  border-radius: 12px;
+  box-shadow: 0 0 20px #0077b6aa;
+  position: relative; /* important for absolute win-line */
 }
 
 .cell {
@@ -21,25 +55,205 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: clamp(8rem, 14vw, 13rem);
+  font-size: clamp(5rem, 10vw, 9rem);
   font-weight: 700;
   color: #003366;
   cursor: pointer;
   transition: background-color 0.25s ease;
-  aspect-ratio: 1 / 1; /* Quadratisch */
+  aspect-ratio: 1 / 1;
   user-select: none;
 }
-.board-container {
-  width: 83vw;          /* 90% der Viewportbreite */
-  max-width: 600px;     /* maximale Breite auf großen Bildschirmen */
-  min-width: 300px;     /* minimale Breite */
-  aspect-ratio: 1 / 1;  /* Quadrat erzwingen */
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 2px;
-  background-color: #e0f7fa;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #0077b6aa;
+
+.cell:hover {
+  background-color: #a1d9e5;
+}
+
+@media (max-height: 600px) {
+  .board-container {
+    margin-top: 10px;
+    width: 95vw;
+    max-width: none;
+  }
+}
+
+.popup {
+  margin-top: 20px;
+  background-color: #ffffffdd;
+  color: #003366;
+  font-weight: bold;
+  padding: 12px 24px;
+  border: 2px solid #00acc1;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 1.25rem;
+  text-align: center;
+  animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* WINNING LINE */
+.win-line {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  background-color: transparent;
+  width: 100%;
+  height: 100%;
+}
+
+/* Base styles for the animated glowing line */
+.win-line::before {
+  content: '';
+  position: absolute;
+  background-color: #ff0000;
+  box-shadow:
+    0 0 5px #ff4d4d,
+    0 0 10px #ff1a1a,
+    0 0 20px #ff0000cc,
+    0 0 40px #ff000099;
+  border-radius: 2px;
+  opacity: 1;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
+}
+
+/* Horizontal lines: animate width from 0 to 100% */
+.win-line.row-0::before,
+.win-line.row-1::before,
+.win-line.row-2::before {
+  height: 6px;
+  width: 0;
+  left: 0;
+  animation-name: drawLineHorizontal;
+  animation-duration: 0.7s;
+}
+
+/* Horizontal lines */
+.win-line.row-0::before {
+  top: calc(100% / 6); /* ~16.66% */
+  transform: translateY(-30%);
+  transform: translateX(5%);
+}
+
+.win-line.row-1::before {
+  top: 50%;
+  transform: translateY(-50%);
+  transform: translateX(5%);
+}
+
+.win-line.row-2::before {
+  top: calc(100% - 100% / 6); /* ~83.33% */
+  transform: translateY(-50%);
+  transform: translateX(5%);
+}
+
+/* Vertical lines */
+.win-line.col-0::before {
+  left: calc(100% / 6); /* ~16.66% */
+  transform: translateX(-30%);
+  transform: translateY(5%);
+}
+
+.win-line.col-1::before {
+  left: 50%;
+  transform: translateX(-50%);
+  transform: translateY(5%);
+
+}
+
+.win-line.col-2::before {
+  left: calc(100% - 100% / 6); /* ~83.33% */
+  transform: translateX(-50%);
+  transform: translateY(5%);
+}
+
+
+
+/* Vertical lines: animate height from 0 to 100% */
+.win-line.col-0::before,
+.win-line.col-1::before,
+.win-line.col-2::before {
+  width: 6px;
+  height: 0;
+  top: 0;
+  animation-name: drawLineVertical;
+  animation-duration: 0.7s;
+}
+
+
+
+/* Diagonal lines: animate width from 0 to 100% with rotation */
+.win-line.diag-main::before {
+  height: 6px;
+  width: 0;
+  top: 15%;
+  left: 15%;
+  border-radius: 3px;
+  animation-name: drawLineHorizontal;
+  animation-duration: 0.7s;
+}
+
+.win-line.diag-anti::before {
+  height: 6px;
+  width: 0;
+  top: 15%;
+  left: 85%;
+  border-radius: 3px;
+  animation-name: drawLineHorizontal;
+  animation-duration: 0.7s;
+}
+.win-line.diag-main::before {
+  transform-origin: left center;
+  transform: rotate(45deg);
+}
+
+.win-line.diag-anti::before {
+  transform-origin: left center;
+  transform: rotate(-225deg);
+}
+
+/* Animation keyframes */
+@keyframes drawLineHorizontal {
+  from { width: 5%; }
+  to { width: 90%; }
+}
+
+@keyframes drawLineVertical {
+  from { height: 0%; }
+  to { height: 90%; }
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #00acc1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   user-select: none;
+}
+
+button:hover {
+  background-color: #008ba3;
+}
+
+button:active {
+  background-color: #006e7a;
+}
+
+button:focus {
+  outline: 2px solid #004d56;
+  outline-offset: 2px;
 }
