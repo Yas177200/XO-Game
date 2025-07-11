@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './Game.css';
 
 function App() {
-  const [turn, setTurn] = useState('X');
+  const [turn, setTurn] = useState('O');
   const [winner, setWinner] = useState();
   const [isDraw, setIsDraw] = useState(false);
   const [winLine, setWinLine] = useState(null);
